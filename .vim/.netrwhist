@@ -1,0 +1,10 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =8
+let g:netrw_dirhist_1='/Users/justinm/node_modules/express/node_modules/connect/lib/middleware/session'
+let g:netrw_dirhist_2='/Users/justinm/projects/client/app'
+let g:netrw_dirhist_3='/Users/justinm/.rvm/gems/ruby-2.1.2/gems/actionpack-4.1.6/lib/action_controller/metal'
+let g:netrw_dirhist_4='/Users/justinm/projects/sccore/packages/schoolcenter-jobqueue-master-1.0'
+let g:netrw_dirhist_5='/Users/justinm/projects/sccore/packages/schoolcenter-jobqueue-master-1.0/debian'
+let g:netrw_dirhist_6='/Users/justinm/projects/sccore/packages/schoolcenter-web-server-10.0'
+let g:netrw_dirhist_7='/Users/justinm/projects/sccore/packages'
+let g:netrw_dirhist_8='/Users/justinm/projects/sccore/upload/scupload'
