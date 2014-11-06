@@ -1,10 +1,8 @@
 #!/bin/bash
 
 installSymlink() {
-	if [ -e "$2" ]; then
-		mv "$2" "$2.orig"
-		ln -s "$1" "$2"
-	fi
+	([ -f "$2" ] || [ -d "$2" ]) && mv "$2" "$2.orig"
+	[ ! -e "$2" ] && ln -s "$1" "$2"
 }
 
 uninstallSymlink() {
@@ -22,4 +20,5 @@ if [ "$1" = "uninstall" ]; then
 	uninstallSymlink ~/.vimrc
 	uninstallSymlink ~/.vim
 fi
+
 
