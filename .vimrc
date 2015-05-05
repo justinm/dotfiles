@@ -22,9 +22,9 @@ set number
 set ruler
 set showcmd
 set showmatch
-set shiftwidth=4
-set softtabstop=4
-set tabstop=4
+set shiftwidth=2
+set softtabstop=2
+set tabstop=2
 set undolevels=1000
 set autoindent
 set modelines=5
@@ -61,9 +61,7 @@ function MyDiff()
 endfunction
 
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-highlight ExtraSpace ctermbg=red ctermfg=white guibg=#592929
 
 call pathogen#infect()
 
-"match OverLength /\%81v.\+/
-match ExtraSpace /[ \t]\+$/
+match OverLength /\%81v.\+/
