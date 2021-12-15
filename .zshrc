@@ -1,7 +1,10 @@
 # Requirements
 # brew install fzf
 
-##################
+# Optional
+# brew install lsd
+
+######### CONFIGURATION ##########
 
 # CASE_SENSITIVE="true"
 # HYPHEN_INSENSITIVE="true"
@@ -15,13 +18,21 @@
 # Uncomment the following line to enable command auto-correction.
 # ENABLE_CORRECTION="true"
 
+DOTFILE_PATH=$(dirname $0:A)
+
 HIST_STAMPS="yyyy/mm/dd"
 COMPLETION_WAITING_DOTS="true"
 
-# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+##################################
 
-SRC_PATH=$(dirname $0:A)
-source $SRC_PATH/antigen.zsh
+if [[ $(/usr/bin/env lsd) != "" ]]; then
+    alias ls=lsd
+fi
+
+source $DOTFILE_PATH/antigen.zsh
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f $DOTFILE_PATH/.p10k.zsh ]] || source $DOTFILE_PATH/.p10k.zsh
 
 antigen use oh-my-zsh
 
@@ -41,9 +52,6 @@ antigen bundle zsh-users/zsh-syntax-highlighting
 
 # Load the theme.
 antigen theme romkatv/powerlevel10k
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f $SRC_PATH/.p10k.zsh ]] || source $SRC_PATH/.p10k.zsh
 
 # Tell Antigen that you're done.
 antigen apply
