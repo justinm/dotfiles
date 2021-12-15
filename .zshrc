@@ -13,7 +13,8 @@
 HIST_STAMPS="yyyy/mm/dd"
 COMPLETION_WAITING_DOTS="true"
 
-source ./antigen.zsh
+SRC_PATH=$(dirname $0:A)
+source $SRC_PATH/antigen.zsh
 
 antigen use oh-my-zsh
 
@@ -29,7 +30,7 @@ antigen bundle zsh-users/zsh-syntax-highlighting
 antigen theme romkatv/powerlevel10k
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ./.p10k.zsh ]] || source ./.p10k.zsh
+[[ ! -f $SRC_PATH/.p10k.zsh ]] || source $SRC_PATH/.p10k.zsh
 
 # Tell Antigen that you're done.
 antigen apply
