@@ -25,7 +25,7 @@ COMPLETION_WAITING_DOTS="true"
 
 ##################################
 
-if [[ $(/usr/bin/env lsd) != "" ]]; then
+if [[ $(/usr/bin/which lsd) != "" ]]; then
     alias ls=lsd
 fi
 
@@ -49,6 +49,7 @@ antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zsh-users/zsh-completions
 antigen bundle zsh-users/zsh-history-substring-search
 antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle Aloxaf/fzf-tab
 
 # Load the theme.
 antigen theme romkatv/powerlevel10k
@@ -60,3 +61,23 @@ antigen apply
 export EDITOR='vim'
 export ARCHFLAGS="-arch x86_64"
 export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export SCALA_HOME=/usr/local/Cellar/scala/2.13.0/
+export GOPATH=$HOME/.go
+
+[[ -f $HOME/.zsecrets ]] && source $HOME/.zsecrets
+
+if [ -e /usr/libexec/java_home ]; then
+	export JAVA_HOME=$(/usr/libexec/java_home)
+fi
+
+export PATH="/usr/local/bin:$PATH"
+export PATH="$PATH:$HOME/bin"
+export PATH="$PATH:${KREW_ROOT:-$HOME/.krew}/bin"
+export PATH="$PATH:Applications/Postgres.app/Contents/Versions/latest/bin"
+
+if [[ $(/usr/bin/which kubectl) != "" ]]; then
+    source <(kubectl completion zsh)
+fi
+
+[ -f $HOME/.fzf.zsh ] && source $HOME/.fzf.zsh
