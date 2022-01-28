@@ -62,22 +62,24 @@ export EDITOR='vim'
 export ARCHFLAGS="-arch x86_64"
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
-export SCALA_HOME=/usr/local/Cellar/scala/2.13.0/
 export GOPATH=$HOME/.go
-
-[[ -f $HOME/.zsecrets ]] && source $HOME/.zsecrets
 
 if [ -e /usr/libexec/java_home ]; then
 	export JAVA_HOME=$(/usr/libexec/java_home)
 fi
 
+export KREW_ROOT=${KREW_ROOT:-$HOME/.krew}
+
 export PATH="/usr/local/bin:$PATH"
-export PATH="$PATH:$HOME/bin"
+export PATH="$HOME/bin:$PATH"
 export PATH="$PATH:${KREW_ROOT:-$HOME/.krew}/bin"
 export PATH="$PATH:Applications/Postgres.app/Contents/Versions/latest/bin"
+export PATH="$PATH:${KREW_ROOT}/bin"
 
 if [[ $(/usr/bin/which kubectl) != "" ]]; then
     source <(kubectl completion zsh)
 fi
 
-[ -f $HOME/.fzf.zsh ] && source $HOME/.fzf.zsh
+[[ -f $HOME/.zsecrets ]] && source $HOME/.zsecrets
+[[ -f $HOME/.zsh_profile ]] && source $HOME/.zsh_profile
+[[ -f $HOME/.fzf.zsh ]] && source $HOME/.fzf.zsh
