@@ -25,10 +25,6 @@ COMPLETION_WAITING_DOTS="true"
 
 ##################################
 
-if [[ $(/usr/bin/which lsd) != "" ]]; then
-    alias ls=lsd
-fi
-
 source $DOTFILE_PATH/antigen.zsh
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
@@ -76,9 +72,28 @@ export PATH="$PATH:${KREW_ROOT:-$HOME/.krew}/bin"
 export PATH="$PATH:Applications/Postgres.app/Contents/Versions/latest/bin"
 export PATH="$PATH:${KREW_ROOT}/bin"
 
+if [[ $(/usr/bin/which lsd) != "" ]]; then
+    alias ls=lsd
+fi
+
+if [[ $(/usr/bin/which saml2aws) != "" ]]; then
+    eval "$(saml2aws --completion-script-zsh)"
+fi
+
 if [[ $(/usr/bin/which kubectl) != "" ]]; then
     source <(kubectl completion zsh)
 fi
+
+function assumerole { eval $( $(which assume-role) $@); }
+
+function unassumerole(){
+    unset AWS_ACCESS_KEY_ID
+    unset AWS_SECRET_ACCESS_KEY
+    unset AWS_SESSION_TOKEN
+    unset AWS_SECURITY_TOKEN
+    unset AWS_PROFILE
+    unset ASSUMED_ROLE
+}
 
 [[ -f $HOME/.zsecrets ]] && source $HOME/.zsecrets
 [[ -f $HOME/.zsh_profile ]] && source $HOME/.zsh_profile
