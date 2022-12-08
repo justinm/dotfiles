@@ -39,13 +39,13 @@ antigen bundle command-not-found
 antigen bundle git
 antigen bundle pip
 antigen bundle nvm
+antigen bundle fzf
 antigen bundle reegnz/jq-zsh-plugin
 antigen bundle joshskidmore/zsh-fzf-history-search  
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zsh-users/zsh-completions
 antigen bundle zsh-users/zsh-history-substring-search
 antigen bundle zsh-users/zsh-syntax-highlighting
-antigen bundle Aloxaf/fzf-tab
 
 # Load the theme.
 antigen theme romkatv/powerlevel10k
@@ -66,6 +66,10 @@ fi
 
 export KREW_ROOT=${KREW_ROOT:-$HOME/.krew}
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 export PATH="/usr/local/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
 export PATH="$PATH:${KREW_ROOT:-$HOME/.krew}/bin"
@@ -84,6 +88,13 @@ if [[ $(/usr/bin/which kubectl) != "" ]]; then
     source <(kubectl completion zsh)
 fi
 
+if [[ $(/usr/bin/which pyenv) != "" ]]; then
+    eval "$(pyenv init --path)"
+fi
+
+[[ -f $HOME/.zsecrets ]] && source $HOME/.zsecrets
+[[ -f $HOME/.zsh_profile ]] && source $HOME/.zsh_profile
+
 function assumerole { eval $( $(which assume-role) $@); }
 
 function unassumerole(){
@@ -94,7 +105,3 @@ function unassumerole(){
     unset AWS_PROFILE
     unset ASSUMED_ROLE
 }
-
-[[ -f $HOME/.zsecrets ]] && source $HOME/.zsecrets
-[[ -f $HOME/.zsh_profile ]] && source $HOME/.zsh_profile
-[[ -f $HOME/.fzf.zsh ]] && source $HOME/.fzf.zsh
