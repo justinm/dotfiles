@@ -1,6 +1,3 @@
-# Requirements
-# brew install fzf
-
 # Optional
 # brew install lsd
 
@@ -23,6 +20,8 @@ DOTFILE_PATH=$(dirname $0:A)
 HIST_STAMPS="yyyy/mm/dd"
 COMPLETION_WAITING_DOTS="true"
 
+fpath+=$DOTFILE_PATH/completions
+
 ##################################
 
 source $DOTFILE_PATH/antigen.zsh
@@ -38,7 +37,7 @@ antigen bundle brew-cask
 antigen bundle command-not-found
 antigen bundle git
 antigen bundle pip
-antigen bundle nvm
+antigen bundle kiurchv/asdf.plugin.zsh
 antigen bundle fzf
 antigen bundle reegnz/jq-zsh-plugin
 antigen bundle joshskidmore/zsh-fzf-history-search  
@@ -55,7 +54,7 @@ antigen apply
 
 # Compilation flags
 export EDITOR='vim'
-export ARCHFLAGS="-arch x86_64"
+#export ARCHFLAGS="-arch x86_64"
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export GOPATH=$HOME/.go
@@ -66,9 +65,17 @@ fi
 
 export KREW_ROOT=${KREW_ROOT:-$HOME/.krew}
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+if [[ -e "$HOME/.nvm" ]]; then
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+    antigen bundle nvm
+fi
+
+if [[ -e "/opt/homebrew/opt/asdf/libexec/asdf.sh" ]]; then
+    . /opt/homebrew/opt/asdf/libexec/asdf.sh
+fi
 
 export PATH="/usr/local/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
@@ -95,13 +102,7 @@ fi
 [[ -f $HOME/.zsecrets ]] && source $HOME/.zsecrets
 [[ -f $HOME/.zsh_profile ]] && source $HOME/.zsh_profile
 
-function assumerole { eval $( $(which assume-role) $@); }
-
-function unassumerole(){
-    unset AWS_ACCESS_KEY_ID
-    unset AWS_SECRET_ACCESS_KEY
-    unset AWS_SESSION_TOKEN
-    unset AWS_SECURITY_TOKEN
-    unset AWS_PROFILE
-    unset ASSUMED_ROLE
-}
+# Tools
+[[ ! -f $DOTFILE_PATH/tools/aws.zsh ]] || source $DOTFILE_PATH/tools/aws.zsh
+[[ ! -f $DOTFILE_PATH/tools/mac.zsh ]] || source $DOTFILE_PATH/tools/mac.zsh
+[[ ! -f $DOTFILE_PATH/tools/web.zsh ]] || source $DOTFILE_PATH/tools/web.zsh
