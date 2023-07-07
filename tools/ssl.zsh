@@ -50,6 +50,10 @@ function ssl-csrgen {
     )
 
     local -A args
+    local verify
+    local verbose
+    local force
+    local help
 
     args[--city]="${CSR_CITY:-Indianapolis}"
     args[--company]="${CSR_COMPANY}"
@@ -69,8 +73,8 @@ function ssl-csrgen {
         {k,-key}: \
         {o,-out}: \
         -state: \
-        -verbose \
-        {v,-verify} \
+        -verbose=verbose \
+        {v,-verify}=verify \
     || return 1
 
     [[ "${#help}" != "0" ]] && { print -l $usage && return 0 }
@@ -93,13 +97,16 @@ function ssl-csrgen {
         ssl-genrsa -f --out "$key" || return $?
     }
 
-    echo "Signing request for $domain with $key > $out"
+    local subject="/C=${country}/ST=${state}/L=${city}/O=${company}/OU=${organization}/CN=$domain"
+
+    echo "Signing request for $domain with $key > $out: ${subject}`
     set -x
-    openssl req -new -key "$key" -nodes -out "$out" -subj "/C=${country}/ST=${state}/L=${city}/O=${company}/OU=${organization}/CN=$domain"
+    openssl req -new -key "$key" -nodes -out "$out" -subj "$subject"
     set +x
 
     [[ "${#verify}" == "1" ]] && {
         local verify_out=$out.txt
+
         openssl req -text -noout -verify -in "$out" > "$verify_out"
         [[ "${#verbose}" == "1" ]] && { cat $verify_out }
     }
