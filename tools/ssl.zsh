@@ -99,7 +99,7 @@ function ssl-csrgen {
 
     local subject="/C=${country}/ST=${state}/L=${city}/O=${company}/OU=${organization}/CN=$domain"
 
-    echo "Signing request for $domain with $key > $out: ${subject}`
+    echo "Signing request for $domain with $key > $out: ${subject}"
     set -x
     openssl req -new -key "$key" -nodes -out "$out" -subj "$subject"
     set +x
