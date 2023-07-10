@@ -122,6 +122,7 @@ fi
 
 # Tools
 [[ -f $DOTFILE_PATH/tools/aws.zsh ]] && . $DOTFILE_PATH/tools/aws.zsh
+[[ -f $DOTFILE_PATH/tools/find.zsh ]] && . $DOTFILE_PATH/tools/find.zsh
 [[ -f $DOTFILE_PATH/tools/mac.zsh ]] && . $DOTFILE_PATH/tools/mac.zsh
 [[ -f $DOTFILE_PATH/tools/ssl.zsh ]] && . $DOTFILE_PATH/tools/ssl.zsh
 [[ -f $DOTFILE_PATH/tools/web.zsh ]] && . $DOTFILE_PATH/tools/web.zsh
