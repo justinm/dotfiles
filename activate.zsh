@@ -17,6 +17,8 @@
 
 ENABLE_JAVA="false"
 ENABLE_NVM="false"
+ENABLE_ANTIGEN="true"
+ENABLE_THEMES="false"
 
 DOTFILE_PATH=$(dirname $0:A)
 
@@ -30,55 +32,61 @@ fpath+=$DOTFILE_PATH/completions
 
 ##################################
 
-THEME="robbyrussell"
+if [[ "$ENABLE_ANTIGEN" == "true" ]]; then
 
-# powerlevel10k tab complete is odd in IntelliJ's terminal
-#[[ "$__CFBundleIdentifier" != "com.jetbrains.intellij" ]] && [[ -f $DOTFILE_PATH/.p10k.zsh ]] && {
-  THEME="romkatv/powerlevel10k"
+  if [[ "$ENABLE_THEMES" == "true" ]]; then
+    THEME="robbyrussell"
 
-  source $DOTFILE_PATH/.p10k.zsh
-#}
+    # powerlevel10k tab complete is odd in IntelliJ's terminal
+    [[ "$__CFBundleIdentifier" != "com.jetbrains.intellij" ]] && [[ -f $DOTFILE_PATH/.p10k.zsh ]] && {
+      THEME="romkatv/powerlevel10k"
 
-# Antigen
-##################################
-source $DOTFILE_PATH/vendor/antigen.zsh
+      source $DOTFILE_PATH/.p10k.zsh
+    }
+  fi
 
-# Remove the user@computer from prompt
-export DEFAULT_USER=$USER
-HIST_STAMPS="yyyy/mm/dd"
-COMPLETION_WAITING_DOTS="true"
+  # Antigen
+  ##################################
+  source $DOTFILE_PATH/vendor/antigen.zsh
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+  # Remove the user@computer from prompt
+  export DEFAULT_USER=$USER
+  HIST_STAMPS="yyyy/mm/dd"
+  COMPLETION_WAITING_DOTS="true"
 
-antigen use oh-my-zsh
+  # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 
-antigen bundle aws
-antigen bundle brew
-antigen bundle brew-cask
-antigen bundle command-not-found
-antigen bundle git
-antigen bundle pip
-antigen bundle fzf
-antigen bundle mroth/evalcache
-antigen bundle reegnz/jq-zsh-plugin
-#antigen bundle joshskidmore/zsh-fzf-history-search
-antigen bundle zsh-users/zsh-autosuggestions
-antigen bundle zsh-users/zsh-completions
-antigen bundle zsh-users/zsh-history-substring-search
-antigen bundle zsh-users/zsh-syntax-highlighting
+  # antigen use oh-my-zsh
 
-antigen theme $THEME
+  antigen bundle aws
+  antigen bundle brew
+  antigen bundle brew-cask
+  # antigen bundle command-not-found
+  # antigen bundle git
+  # antigen bundle pip
+  # antigen bundle fzf
+  # antigen bundle hadenlabs/zsh-starship
+  antigen bundle mroth/evalcache
+  antigen bundle reegnz/jq-zsh-plugin
+  antigen bundle joshskidmore/zsh-fzf-history-search
+  antigen bundle zsh-users/zsh-autosuggestions
+  antigen bundle zsh-users/zsh-completions
+  # antigen bundle zsh-users/zsh-history-substring-search
+  antigen bundle zsh-users/zsh-syntax-highlighting
+
+  [[ "$ENABLE_THEMES" == "true" ]] && antigen theme $THEME
+fi
 
 [[ "$ENABLE_NVM" == "true" ]] && [[ -e "$HOME/.nvm" ]] && {
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-    antigen bundle nvm
+    [[ "$ENABLE_ANTIGEN" == "true" ]] && antigen bundle nvm
 }
 
 # Tell Antigen that you're done.
-antigen apply
+[[ "$ENABLE_ANTIGEN" == "true" ]] && antigen apply
 
 export ZSH_EVALCACHE_DIR="$HOME/cache/eval-cache"
 
@@ -128,6 +136,8 @@ zstyle ':completion:*' cache-path ~/.zsh/cache
 
 setopt rm_star_silent
 
+alias ll="ls -al"
+
 export KREW_ROOT=${KREW_ROOT:-$HOME/.krew}
 export PATH="/usr/local/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
@@ -135,3 +145,9 @@ export PATH="$PATH:${KREW_ROOT:-$HOME/.krew}/bin"
 export PATH="$PATH:Applications/Postgres.app/Contents/Versions/latest/bin"
 export PATH="$PATH:${KREW_ROOT}/bin"
 export DOCKER_DEFAULT_PLATFORM="linux/amd64"
+
+export STARSHIP_CONFIG="$DOTFILE_PATH/starship.toml"
+
+if [[ -e "/usr/local/bin/starship" ]]; then
+    eval "$(starship init zsh)"
+fi
