@@ -136,6 +136,12 @@ zstyle ':completion:*' cache-path ~/.zsh/cache
 
 setopt rm_star_silent
 
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
+
+bindkey "\033[H" beginning-of-line
+bindkey "\033[F" end-of-line
+
 alias ll="ls -al"
 
 export KREW_ROOT=${KREW_ROOT:-$HOME/.krew}
