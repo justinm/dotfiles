@@ -1,0 +1,14 @@
+getantidote/use-omz
+joshskidmore/zsh-fzf-history-search
+mroth/evalcache
+ohmyzsh/ohmyzsh path:plugins/aws
+ohmyzsh/ohmyzsh path:plugins/colored-man-pages
+ohmyzsh/ohmyzsh path:plugins/gitfast
+ohmyzsh/ohmyzsh path:plugins/safe-paste
+ohmyzsh/ohmyzsh path:plugins/zoxide
+reegnz/jq-zsh-plugin
+romkatv/powerlevel10k
+romkatv/zsh-bench kind:path
+zsh-users/zsh-autosuggestions
+zsh-users/zsh-completions
+zsh-users/zsh-syntax-highlighting

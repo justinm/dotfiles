@@ -17,7 +17,8 @@
 
 ENABLE_JAVA="${ENABLE_JAVA:=false}"
 ENABLE_NVM="${ENABLE_NVM:=false}"
-ENABLE_ANTIGEN="${ENABLE_ANTIGEN:=true}"
+ENABLE_ANTIGEN="${ENABLE_ANTIGEN:=false}"
+ENABLE_ANTIDOTE="${ENABLE_ANTIDOTE:=true}"
 ENABLE_THEMES="${ENABLE_THEMES:=true}"
 
 DOTFILE_PATH=$(dirname $0:A)
@@ -28,59 +29,64 @@ export EDITOR='vim'
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
+autoload -Uz compinit
+compinit
+
 fpath+=$DOTFILE_PATH/completions
 
 ##################################
 
-if [[ "$ENABLE_ANTIGEN" == "true" ]]; then
-  if [[ "$ENABLE_THEMES" == "true" ]]; then
-    THEME="robbyrussell"
+export DEFAULT_USER=$USER
+HIST_STAMPS="yyyy/mm/dd"
+COMPLETION_WAITING_DOTS="true"
 
-    # powerlevel10k tab complete is odd in IntelliJ's terminal
-    [[ "$__CFBundleIdentifier" != "com.jetbrains.intellij" ]] && [[ -e "$DOTFILE_PATH/.p10k.zsh" ]] && {
-      THEME="romkatv/powerlevel10k"
+[[ "$ENABLE_THEMES" == "true" ]] && {
+  export ZSH_THEME="robbyrussell"
 
-      source $DOTFILE_PATH/.p10k.zsh
-    }
-  fi
+  [[ ! -e "$HOME/.p10k.zsh" ]] && {
+    ln -s $DOTFILE_PATH/.p10k.zsh $HOME/.p10k.zsh
+  }
 
+  # powerlevel10k tab complete is odd in IntelliJ's terminal
+  [[ "$__CFBundleIdentifier" != "com.jetbrains.intellij" ]] && [[ -e "$DOTFILE_PATH/.p10k.zsh" ]] && {
+    export ZSH_THEME="romkatv/powerlevel10k"
+  }
+}
+
+[[ "$ENABLE_ANTIDOTE" == "true" ]] && {
+  [[ ! -d "${ZDOTDIR:-$HOME}/.antidote" ]] && {
+    git clone --depth=1 https://github.com/mattmc3/antidote.git ${ZDOTDIR:-$HOME}/.antidote
+  }
+
+  source ${ZDOTDIR:-$HOME}/.antidote/antidote.zsh
+  antidote load $DOTFILE_PATH/zsh_plugins.txt
+}
+
+[[ "$ENABLE_ANTIGEN" == "true" ]] && {
   # Antigen
   ##################################
   source $DOTFILE_PATH/vendor/antigen.zsh
 
-  # Remove the user@computer from prompt
-  export DEFAULT_USER=$USER
-  HIST_STAMPS="yyyy/mm/dd"
-  COMPLETION_WAITING_DOTS="true"
-
-  # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+    # Remove the user@computer from prompt
+    # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 
   antigen use oh-my-zsh
 
-  #  antigen bundle aws
-  #  antigen bundle brew
-  #  antigen bundle brew-cask
-  #  antigen bundle command-not-found
-  #  antigen bundle git
-  #  antigen bundle pip
-  #  antigen bundle fzf
-  #  antigen bundle hadenlabs/zsh-starship
-  #  antigen bundle mroth/evalcache
-  #  antigen bundle reegnz/jq-zsh-plugin
+  antigen bundle aws
+  antigen bundle gitfast
+  antigen bundle safe-paste
   antigen bundle joshskidmore/zsh-fzf-history-search
-  #  antigen bundle zsh-users/zsh-autosuggestions
-  #  antigen bundle zsh-users/zsh-completions
-  #  antigen bundle zsh-users/zsh-syntax-highlighting
+  antigen bundle zsh-users/zsh-autosuggestions
+  antigen bundle zsh-users/zsh-completions
+  antigen bundle zsh-users/zsh-syntax-highlighting
 
-  [[ "$ENABLE_THEMES" == "true" ]] && [[ -n "$THEME" ]] && antigen theme $THEME
-fi
+  [[ "$ENABLE_THEMES" == "true" ]] && [[ -n "$ZSH_THEME" ]] && antigen theme $ZSH_THEME
+}
 
 [[ "$ENABLE_NVM" == "true" ]] && [[ -e "$HOME/.nvm" ]] && {
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-    [[ "$ENABLE_ANTIGEN" == "true" ]] && antigen bundle nvm
 }
 
 # Tell Antigen that you're done.
@@ -89,8 +95,8 @@ fi
 export ZSH_EVALCACHE_DIR="$HOME/cache/eval-cache"
 
 [[ "$ENABLE_JAVA" == "true" ]] && [[ -e "/usr/libexec/java_home" ]] && {
-    JAVA_HOME=$(/usr/libexec/java_home)
-    export JAVA_HOME
+  JAVA_HOME=$(/usr/libexec/java_home)
+  export JAVA_HOME
 }
 
 if [[ -e "$HOME/bin/rtx" ]]; then
@@ -101,20 +107,24 @@ if [[ -e "/opt/homebrew/opt/asdf/libexec/asdf.sh" ]]; then
     . /opt/homebrew/opt/asdf/libexec/asdf.sh
 fi
 
-if [[ $(/usr/bin/which lsd) != "" ]]; then
-    alias ls=lsd
+if type lsd &>/dev/null
+then
+  alias ls=lsd
 fi
 
-if [[ $(/usr/bin/which saml2aws) != "" ]]; then
-    eval "$(saml2aws --completion-script-zsh)"
+if type kubectl &>/dev/null
+then
+  source <(kubectl completion zsh)
 fi
 
-if [[ $(/usr/bin/which kubectl) != "" ]]; then
-    source <(kubectl completion zsh)
-fi
+# if type saml2aws &>/dev/null
+# then
+#   eval "$(saml2aws --completion-script-zsh)"
+# fi
 
-if [[ $(/usr/bin/which pyenv) != "" ]]; then
-    eval "$(pyenv init --path)"
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 fi
 
 [[ -f $HOME/.zsecrets ]] && source $HOME/.zsecrets
@@ -132,6 +142,13 @@ fi
 zstyle ':completion:*' accept-exact '*(N)'
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path ~/.zsh/cache
+zstyle ':omz:alpha:lib:git' async-prompt yes
+
+# Make git completion more resilient
+zstyle ':completion:*:git-*:*' force-list always
+zstyle ':completion:*:git-*:*' complete-options true
+# Reduce git completion cache time
+zstyle ':completion:*:git-*:*' cache-ttl 300
 
 setopt rm_star_silent
 
@@ -140,7 +157,8 @@ bindkey "^[b" backward-word # Option + Left Arrow
 bindkey "^[[H" beginning-of-line # Home
 bindkey "^[[F" end-of-line # End
 
-alias ll="ls -al"
+alias ls="ls --color=auto"
+alias ll="ls -al --color=auto"
 
 export KREW_ROOT=${KREW_ROOT:-$HOME/.krew}
 export PATH="/usr/local/bin:$PATH"
@@ -148,6 +166,8 @@ export PATH="$HOME/bin:$PATH"
 export PATH="$PATH:${KREW_ROOT:-$HOME/.krew}/bin"
 export PATH="$PATH:Applications/Postgres.app/Contents/Versions/latest/bin"
 export PATH="$PATH:${KREW_ROOT}/bin"
+export PATH="$PATH:$HOME/.docker/bin"
+export PATH="$PATH:$HOME/bin"
 export DOCKER_DEFAULT_PLATFORM="linux/amd64"
 
 if [[ -e "/usr/local/bin/starship" ]] && [[ "$ENABLE_STARSHIP" == "true" ]]; then
