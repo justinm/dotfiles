@@ -1,16 +1,22 @@
 
 function aws-login {
-    local arg="$1"
-    local aws_profile="${arg:=$AWS_PROFILE}"
+    [[ -e ".env" ]] && source .env
+    local ARGS="$@"
+    local profiles="${ARGS:=$AWS_PROFILES}"
+    local profile_array
 
-    [[ -z "$aws_profile" ]] && echo "You must specify a profile" && return 1
+    # Split profiles into an array
+    if [[ -n "$profiles" ]]; then
+        IFS=' ' read -r -A profile_array <<< "$profiles"
+    fi
 
-    set -x
-    aws sso login --profile $aws_profile || return 1
-    python3 -m yawsso -p $aws_profile || return 1
+    [[ -z "$profile_array" ]] && echo "You must specify at least one profile" && return 1
 
-    export AWS_PROFILE="$aws_profile" || return 1
-    set +x
+    for entry in $profile_array; do
+        set -x
+        aws sso login --profile $entry || return 1
+        set +x
+    done
 }
 
 function aws-switch-profile {
@@ -64,6 +70,18 @@ function aws-ssh {
 
 function aws-whoami {
     aws sts get-caller-identity
+}
+
+function aws-credentials() {
+    if [[ -z "$1" ]]; then
+        AWS_PROFILE=$1
+        return 1
+    fi
+
+    echo AWS_PROFILE=$AWS_PROFILE
+    echo export AWS_ACCESS_KEY_ID=$(aws --profile $AWS_PROFILE configure get aws_access_key_id)
+    echo export AWS_SECRET_ACCESS_KEY=$(aws --profile $AWS_PROFILE configure get aws_secret_access_key)
+    echo export AWS_SESSION_TOKEN=$(aws --profile $AWS_PROFILE configure get aws_session_token)
 }
 
 alias aws-profile=aws-switch-profile
